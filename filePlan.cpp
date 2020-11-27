@@ -47,10 +47,6 @@ void FilePlan::addAsChild(Folder *currentFolder, Folder *newChildFolder)
     (*newChildFolder).setId(getNewId());
     (*currentFolder).getChildren().push_back(*newChildFolder);
     this->systemFile.push_back(*newChildFolder);
-    if(currentFolder->getName() == "user1")
-    {
-        std::cout << currentFolder->getChildren().size() << std::endl;
-    }
 }
 
 void FilePlan::addAsChild(Folder *currentFolder, std::vector<Folder> *newChildrenFolders)
