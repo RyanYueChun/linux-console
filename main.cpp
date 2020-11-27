@@ -2,15 +2,12 @@
 #include <vector>
 
 #include "folder.h"
-#include "filePlan.h"
 
-
-int FilePlan::latestId = 0;
+int Folder::latestId = 0;
 
 int main()
 {
     Folder root("/");
-    root.setId(0);
     Folder home("home");
     Folder user1("user1");
 
@@ -21,16 +18,13 @@ int main()
     Folder pictures("pictures");
     Folder videos("videos");
 
-    FilePlan filePlan(root);
+    root.addFolder(&home);
+    home.addFolder(&user1);
 
-    filePlan.addFolderToPlan(root.getName(), root.getId(), &home);
-    filePlan.addFolderToPlan(home.getName(), home.getId(), &user1);
+    std::vector<Folder*> user1Children = {&desktop, &documents, &downloads, &music, &pictures, &videos, &videos};
+    user1.addFolder(user1Children);
 
-    std::vector<Folder> user1Children;
-
-    user1Children = {desktop, documents, downloads, music, pictures, videos};
-    filePlan.addFolderToPlan(user1.getName(), user1.getId(), &user1Children);
-
-    Folder current = findFolder(filePlan.getSystemFile(), user1.getName(), user1.getId());
-    std::cout << current.getChildren().size() << std::endl;
+    Folder* current = Folder::findFolder(root,home.getId());
+    std::cout << "\'current\' size: " << current->getFileSystem().size() << std::endl;
+    std::cout << "\'user1\' files: \n" << user1.getSubfoldersString() << std::endl;
 }
