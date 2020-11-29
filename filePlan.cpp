@@ -30,7 +30,6 @@ void FilePlan::addFolderToPlan(const std::string parentName, const int parentId,
         Folder *found = findFolder(parent->getChildren(), newChildFolder->getName());
         if(found->getName() != NOT_FOUND)
         {
-            std::cout << parent->getName() + " : " + parentName << "\n";
             std::cout << "Folder \'" + (*newChildFolder).getName() + "\' already exists inside " << parent->getName() << std::endl;
         } else
         {

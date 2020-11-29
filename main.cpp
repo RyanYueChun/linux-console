@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 #include "folder.h"
 #include "filePlan.h"
@@ -45,6 +46,7 @@ int main()
 
     // Read user's input
     std::string line;
+    std::vector<Folder *> createdFolders;
     while(line != "quit")
     {
         std::vector<std::string> words;
@@ -53,17 +55,51 @@ int main()
 
         strToVector(line, &words, " ");
 
-        if (words[0] == "cd")
+        if (words[0] == "cd" && words.size() > 1)
         {
             // cd has only 1 argument
             selectedFolder = filePlan.targetDir(filePlan, selectedFolder, words[1]);
+            std::cout << selectedFolder->getPath() + " $ ";
         }
         if (words[0] == "ls")
         {
             std::cout << selectedFolder->listOfChildren() << std::endl;
         }
+        if (words[0] == "mkdir")
+        {
+            for (int i = 1; i < words.size(); i++)
+            {
+                Folder *createdFolder = new Folder(words[i]);
+                filePlan.addFolderToPlan(selectedFolder->getName(), selectedFolder->getId(), createdFolder);
+                createdFolders.push_back(createdFolder);
+            }
+        }
+        if (words[0] == "vi")
+        {
+            std::ifstream fileInput(words[1], std::ios::in);
+            std::ofstream fileOutput(words[1], std::ios_base::app);
+            std::string text;
+            if (fileInput.is_open())
+            {
+                while (getline(fileInput, text))
+                {
+                    std::cout << text << std::endl;
+                }
+            }
+            if (fileOutput.is_open())
+            {
+                getline(std::cin, text);
+                fileOutput << text << std::endl;
+                std::cout << "Text saved\n";
+            }
+        }
     }
 
+    for (std::vector<Folder *>::iterator i = createdFolders.begin(); i != createdFolders.end(); ++i)
+    {
+        delete *i;
+    }
+    createdFolders.clear();
     if (selectedFolder->getName() == NOT_FOUND)
     {
         delete selectedFolder;
