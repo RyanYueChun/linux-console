@@ -58,7 +58,10 @@ int main()
             // cd has only 1 argument
             selectedFolder = filePlan.targetDir(filePlan, selectedFolder, words[1]);
         }
-        
+        if (words[0] == "ls")
+        {
+            std::cout << selectedFolder->listOfChildren() << std::endl;
+        }
     }
 
     if (selectedFolder->getName() == NOT_FOUND)
