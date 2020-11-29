@@ -21,6 +21,10 @@ std::string Folder::getName()
     return this->name;
 }
 
+std::string Folder::getPath()
+{
+    return this->path;
+}
 
 int Folder::getId()
 {
@@ -35,6 +39,11 @@ std::vector<Folder *> Folder::getChildren()
 void Folder::setName(std::string name)
 {
     this->name = name;
+}
+
+void Folder::setPath(std::string path)
+{
+    this->path = path;
 }
 
 void Folder::setId(int id)
