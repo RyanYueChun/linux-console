@@ -21,16 +21,25 @@ int main()
     Folder pictures("pictures");
     Folder videos("videos");
 
-    FilePlan filePlan(root);
+    FilePlan filePlan(&root);
 
     filePlan.addFolderToPlan(root.getName(), root.getId(), &home);
     filePlan.addFolderToPlan(home.getName(), home.getId(), &user1);
 
-    std::vector<Folder> user1Children;
+    std::vector<Folder *> user1Children;
+    user1Children = {
+        &desktop,
+        &documents,
+        &downloads,
+        &music,
+        &pictures,
+        &videos
+    };
 
-    user1Children = {desktop, documents, downloads, music, pictures, videos};
-    filePlan.addFolderToPlan(user1.getName(), user1.getId(), &user1Children);
+    filePlan.addFolderToPlan(user1.getName(), user1.getId(), user1Children);
 
-    Folder current = findFolder(filePlan.getSystemFile(), user1.getName(), user1.getId());
-    std::cout << current.getChildren().size() << std::endl;
+    Folder *selectedFolder = findFolder(filePlan.getSystemFile(), user1.getName(), user1.getId());
+    std::cout << "Size of current.getChildren().size() : " << selectedFolder->getChildren().size() << std::endl;
+
+    
 }

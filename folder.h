@@ -9,17 +9,19 @@ class Folder
 private:
     int id;
     std::string name;
-    std::vector<Folder> children;
+    std::vector<Folder *> children;
 public:
     Folder();
-    Folder(std::string name);
-    Folder(std::string, int, std::vector<Folder>);
+    Folder(const std::string name);
+    Folder(const std::string, const int, const std::vector<Folder *>);
     std::string getName();
     int getId();
-    std::vector<Folder> getChildren();
+    std::vector<Folder *> getChildren();
     void setName(std::string);
     void setId(int);
-    void setChildren(std::vector<Folder>&);
+    void setChildren(std::vector<Folder *>);
+    void addChild(Folder *);
+    void addChildren(std::vector<Folder *>);
     std::string listOfChildren();
 };
 
