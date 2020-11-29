@@ -16,11 +16,14 @@ public:
     void addAsChild(Folder *, Folder *);
     void addAsChild(Folder *, std::vector<Folder *>);
     static int getNewId();
+    Folder* targetDir(FilePlan filePlan, Folder *currentFolder, std::string destinationName);
 };
 
 Folder* findFolder(std::vector<Folder *>, const std::string, const int id);
 Folder* findFolder(std::vector<Folder *>, const std::string);
-void readCommand(std::string line, std::vector<std::string> *words, std::string seperator);
+Folder* findParent(std::vector<Folder *> folders, const std::string parentName, int childId);
+void strToVector(std::string line, std::vector<std::string> *words, std::string seperator);
 
+const std::string NOT_FOUND = "Not Found";
 
 #endif

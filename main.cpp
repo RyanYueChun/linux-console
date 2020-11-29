@@ -11,6 +11,7 @@ int main()
 {
     Folder root("/");
     root.setId(0);
+    root.setPath(root.getName());
     Folder home("home");
     Folder user1("user1");
 
@@ -38,8 +39,30 @@ int main()
 
     filePlan.addFolderToPlan(user1.getName(), user1.getId(), user1Children);
 
-    Folder *selectedFolder = findFolder(filePlan.getSystemFile(), user1.getName(), user1.getId());
-    std::cout << "Size of current.getChildren().size() : " << selectedFolder->getChildren().size() << std::endl;
+    // Folder where console is by default
+    Folder *selectedFolder = findFolder(filePlan.getSystemFile(), music.getName(), music.getId());
+    std::cout << selectedFolder->getPath() << std::endl;
 
-    
+    // Read user's input
+    std::string line;
+    while(line != "quit")
+    {
+        std::vector<std::string> words;
+        
+        std::getline(std::cin, line);
+
+        strToVector(line, &words, " ");
+
+        if (words[0] == "cd")
+        {
+            // cd has only 1 argument
+            selectedFolder = filePlan.targetDir(filePlan, selectedFolder, words[1]);
+        }
+        
+    }
+
+    if (selectedFolder->getName() == NOT_FOUND)
+    {
+        delete selectedFolder;
+    }
 }

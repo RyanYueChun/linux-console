@@ -24,11 +24,11 @@ void FilePlan::addFolderToPlan(const std::string parentName, const int parentId,
     std::vector<Folder *> folders = this->systemFile;
 
     Folder *parent = findFolder(folders, parentName, parentId);
-    if(parent->getName() != "Not Found")
+    if(parent->getName() != NOT_FOUND)
     {
         // child already exist?
         Folder *found = findFolder(parent->getChildren(), newChildFolder->getName());
-        if(found->getName() != "Not Found")
+        if(found->getName() != NOT_FOUND)
         {
             std::cout << parent->getName() + " : " + parentName << "\n";
             std::cout << "Folder \'" + (*newChildFolder).getName() + "\' already exists inside " << parent->getName() << std::endl;
@@ -50,6 +50,7 @@ void FilePlan::addFolderToPlan(const std::string parentName, const int parentId,
 void FilePlan::addAsChild(Folder *currentFolder, Folder *newChildFolder)
 {
     newChildFolder->setId(getNewId());
+    newChildFolder->setPath(currentFolder->getPath() + newChildFolder->getName() + "/");
     currentFolder->addChild(newChildFolder);
     this->systemFile.push_back(newChildFolder);
 }
@@ -73,13 +74,13 @@ Folder* findFolder(std::vector<Folder *> folders, const std::string name, const 
     {
         for(Folder *folder : folders)
         {
-            if ((*folder).getName() == name && (*folder).getId() == id)
+            if (folder->getName() == name && folder->getId() == id)
             {
                 return folder;
             }
         }
     }
-    return new Folder("Not Found");
+    return new Folder(NOT_FOUND);
 }
 
 Folder* findFolder(std::vector<Folder *> folders, const std::string name)
@@ -88,16 +89,39 @@ Folder* findFolder(std::vector<Folder *> folders, const std::string name)
     {
         for(Folder *folder : folders)
         {
-            if ((*folder).getName() == name)
+            if (folder->getName() == name)
             {
                 return folder;
             }
         }
     }
-    return new Folder("Not Found");
+    return new Folder(NOT_FOUND);
 }
 
-void readCommand(std::string line, std::vector<std::string> *words, std::string seperator)
+Folder* findParent(std::vector<Folder *> folders, const std::string parentName, int childId)
+{
+    std::vector<Folder*> foundNames;
+
+    if(!folders.empty())
+    {
+        for(Folder *folder : folders)
+        {
+            if (folder->getName() == parentName)
+            {
+                for (Folder *child : folder->getChildren())
+                {
+                    if (child->getId() == childId)
+                    {
+                        return folder;
+                    }
+                }
+            }
+        }
+    }
+    return new Folder(NOT_FOUND);
+}
+
+void strToVector(std::string line, std::vector<std::string> *words, std::string seperator)
 {
     while (line.size() > 0)
     {
@@ -120,4 +144,39 @@ void readCommand(std::string line, std::vector<std::string> *words, std::string 
             break;
         }
     }
+}
+
+Folder* FilePlan::targetDir(FilePlan filePlan, Folder *currentFolder, std::string destinationName)
+{
+    std::vector<std::string> args;
+    strToVector(destinationName, &args, "/");
+
+    if (destinationName[0] == '/')
+    {
+        currentFolder = findFolder(this->getSystemFile(), "/", 0);
+    }
+
+    for (std::string arg : args)
+    {
+        if (arg == ".")
+        {
+            continue;
+        }
+        if (arg == "..")
+        {
+            std::vector<std::string> parentNames;
+            strToVector(currentFolder->getPath(), &parentNames, "/");
+            currentFolder = findParent(this->getSystemFile(), parentNames[parentNames.size() - 2], currentFolder->getId());
+            continue;
+        }
+
+        Folder *found = findFolder(currentFolder->getChildren(), arg);
+        if (found->getName() == NOT_FOUND)
+        {
+            std::cout << arg + " not found in " + currentFolder->getName() << std::endl;
+            break;
+        }
+        currentFolder = found;
+    }
+    return currentFolder;
 }
