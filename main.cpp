@@ -59,7 +59,6 @@ int main()
         {
             // cd has only 1 argument
             selectedFolder = filePlan.targetDir(filePlan, selectedFolder, words[1]);
-            std::cout << selectedFolder->getPath() + " $ ";
         }
         if (words[0] == "ls")
         {
@@ -93,6 +92,7 @@ int main()
                 std::cout << "Text saved\n";
             }
         }
+        std::cout << selectedFolder->getPath() + " $ ";
     }
 
     for (std::vector<Folder *>::iterator i = createdFolders.begin(); i != createdFolders.end(); ++i)
