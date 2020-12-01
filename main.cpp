@@ -47,6 +47,7 @@ int main()
     // Read user's input
     std::string line;
     std::vector<Folder *> createdFolders;
+    std::string storageFolder = "contents/";
     while(line != "quit")
     {
         std::vector<std::string> words;
@@ -75,8 +76,8 @@ int main()
         }
         if (words[0] == "vi")
         {
-            std::ifstream fileInput(words[1], std::ios::in);
-            std::ofstream fileOutput(words[1], std::ios_base::app);
+            std::ifstream fileInput(storageFolder + words[1], std::ios::in);
+            std::ofstream fileOutput(storageFolder + words[1], std::ios_base::app);
             std::string text;
             if (fileInput.is_open())
             {
@@ -94,6 +95,7 @@ int main()
         }
         std::cout << selectedFolder->getPath() + " $ ";
     }
+    std::cout << std::endl;
 
     for (std::vector<Folder *>::iterator i = createdFolders.begin(); i != createdFolders.end(); ++i)
     {
