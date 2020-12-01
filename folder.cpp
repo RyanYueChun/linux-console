@@ -16,41 +16,37 @@ Folder::Folder(const std::string name)
 //     this->setChildren(children);
 // }
 
+int Folder::getId()
+{
+    return this->id;
+}
+void Folder::setId(int id)
+{
+    this->id = id;
+}
+
 std::string Folder::getName()
 {
     return this->name;
+}
+void Folder::setName(std::string name)
+{
+    this->name = name;
 }
 
 std::string Folder::getPath()
 {
     return this->path;
 }
-
-int Folder::getId()
+void Folder::setPath(std::string path)
 {
-    return this->id;
+    this->path = path;
 }
 
 std::vector<Folder *> Folder::getChildren()
 {
     return this->children;
 }
-
-void Folder::setName(std::string name)
-{
-    this->name = name;
-}
-
-void Folder::setPath(std::string path)
-{
-    this->path = path;
-}
-
-void Folder::setId(int id)
-{
-    this->id = id;
-}
-
 void Folder::setChildren(std::vector<Folder *> children)
 {
     this->children = children;
@@ -60,7 +56,6 @@ void Folder::addChild(Folder * child)
 {
     this->children.push_back(child);
 }
-
 void Folder::addChildren(std::vector<Folder *> children)
 {
     for(Folder *child : children)
@@ -68,7 +63,6 @@ void Folder::addChildren(std::vector<Folder *> children)
         addChild(child);
     }
 }
-
 std::string Folder::listOfChildren()
 {
     std::vector<Folder *> list = this->getChildren();

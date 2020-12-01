@@ -15,14 +15,19 @@ public:
     Folder();
     Folder(const std::string name);
     Folder(const std::string, const int, const std::vector<Folder *>);
-    std::string getName();
-    std::string getPath();
+
     int getId();
-    std::vector<Folder *> getChildren();
-    void setName(std::string);
-    void setPath(std::string);
     void setId(int);
+
+    std::string getName();
+    void setName(std::string);
+
+    std::string getPath();
+    void setPath(std::string);
+
+    std::vector<Folder *> getChildren();
     void setChildren(std::vector<Folder *>);
+
     void addChild(Folder *);
     void addChildren(std::vector<Folder *>);
     std::string listOfChildren();
