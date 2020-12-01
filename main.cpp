@@ -3,6 +3,7 @@
 #include <fstream>
 
 #include "folder.h"
+#include "file.h"
 #include "filePlan.h"
 
 
