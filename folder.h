@@ -12,7 +12,7 @@ private:
     std::string name;
     std::string path;
     std::vector<Folder *> children;
-    std::vector<File::File> contents;
+    std::vector<File> contents;
 public:
     Folder();
     Folder(const std::string name);
@@ -34,8 +34,8 @@ public:
     void addChildren(std::vector<Folder *>);
     std::string listOfChildren();
     
-    std::vector<File::File> getContents();
-    void addContent(File::File content);
+    std::vector<File> getContents();
+    void addContent(File content);
     std::string listOfContents();
 };
 
