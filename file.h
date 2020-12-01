@@ -1,5 +1,5 @@
-#ifndef FILE
-#define FILE
+#ifndef CUSTOM_FILE
+#define CUSTOM_FILE
 
 #include <string>
 
