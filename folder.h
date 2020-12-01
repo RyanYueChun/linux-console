@@ -39,4 +39,7 @@ public:
     std::string listOfContents();
 };
 
+template <typename T>
+std::string printVector(std::vector<T> vector);
+
 #endif
