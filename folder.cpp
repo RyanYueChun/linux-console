@@ -65,20 +65,32 @@ void Folder::addChildren(std::vector<Folder *> children)
 }
 std::string Folder::listOfChildren()
 {
-    return printVector(this->getChildren());
+    std::vector<Folder *> vector = this->getChildren();
+    std::string strList;
+    for(Folder *f : vector)
+    {
+        strList += f->getName() + "\t";
+    }
+    return strList;
 }
 
-std::vector<File::File> Folder::getContents()
+std::vector<File> Folder::getContents()
 {
     return this->contents;
 }
-void Folder::addContent(File::File content)
+void Folder::addContent(File content)
 {
     this->contents.push_back(content);
 }
 std::string Folder::listOfContents()
 {
-    return printVector(this->getContents());
+    std::vector<File> vector = this->getContents();
+    std::string strList;
+    for(File f : vector)
+    {
+        strList += f.getName() + "\t";
+    }
+    return strList;
 }
 
 template <typename T>
@@ -87,7 +99,7 @@ std::string printVector(std::vector<T> vector)
     std::string strList;
     for(T f : vector)
     {
-        strList += f.getName() + "\t";
+        strList += f + "\t";
     }
     return strList;
 }
