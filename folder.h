@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "file.h"
 
 class Folder
 {
@@ -11,6 +12,7 @@ private:
     std::string name;
     std::string path;
     std::vector<Folder *> children;
+    std::vector<File::File> contents;
 public:
     Folder();
     Folder(const std::string name);
@@ -31,6 +33,10 @@ public:
     void addChild(Folder *);
     void addChildren(std::vector<Folder *>);
     std::string listOfChildren();
+    
+    std::vector<File::File> getContents();
+    void addContent(File::File content);
+    std::string listOfContents();
 };
 
 #endif

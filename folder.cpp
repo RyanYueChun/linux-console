@@ -73,3 +73,22 @@ std::string Folder::listOfChildren()
     }
     return strList;
 }
+
+std::vector<File::File> Folder::getContents()
+{
+    return this->contents;
+}
+void Folder::addContent(File::File content)
+{
+    this->contents.push_back(content);
+}
+std::string Folder::listOfContents()
+{
+    std::vector<File::File> list = this->getContents();
+    std::string strList;
+    for(File f : list)
+    {
+        strList += f.getName() + "\t";
+    }
+    return strList;
+}
