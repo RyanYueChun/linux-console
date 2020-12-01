@@ -5,3 +5,4 @@ filePlan.o
 folder.o
 linux_console
 contents/*
+file.o
