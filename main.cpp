@@ -98,14 +98,22 @@ int main()
 
         strToVector(line, &words, " ");
 
-        if (words[0] == "cd" && words.size() > 1)
+        if (words[0] == "cd" && words.size() == 2)
         {
             // cd has only 1 argument
             selectedFolder = selectedFilePlan.targetDir(selectedFolder, words[1]);
         }
         if (words[0] == "ls")
         {
-            std::cout << selectedFolder->listOfChildren() + "\t\t" + selectedFolder->listOfFiles() << std::endl;
+            Folder *temp;
+            if (words.size() == 2)
+            {
+                temp = selectedFilePlan.targetDir(selectedFolder, words[1]);
+                std::cout << temp->listOfChildren() + "\t\t" + temp->listOfFiles() << std::endl;
+            } else
+            {
+                std::cout << selectedFolder->listOfChildren() + "\t\t" + selectedFolder->listOfFiles() << std::endl;
+            }
         }
         if (words[0] == "mkdir")
         {
@@ -118,35 +126,45 @@ int main()
         }
         if (words[0] == "vi")
         {
-            std::ifstream fileInput(storageFolder + words[1], std::ios::in);
-            std::ofstream fileOutput(storageFolder + words[1], std::ios_base::app);
-            std::string text;
-            if (fileInput.is_open())
+            if (words.size() == 2 && !words[1].empty())
             {
-                while (getline(fileInput, text))
+                std::ifstream fileInput(storageFolder + words[1], std::ios::in);
+                std::ofstream fileOutput(storageFolder + words[1], std::ios_base::app);
+                std::string text;
+                if (fileInput.is_open())
                 {
-                    std::cout << text << std::endl;
+                    while (getline(fileInput, text))
+                    {
+                        std::cout << text << std::endl;
+                    }
                 }
-            }
-            if (fileOutput.is_open())
+                if (fileOutput.is_open())
+                {
+                    File *createdFile = new File(words[1]);
+                    selectedFilePlan.addFile(selectedFolder->getName(), selectedFolder->getId(), *createdFile);
+                    getline(std::cin, text);
+                    fileOutput << text << std::endl;
+                    std::cout << "Text saved\n";
+                    delete createdFile;
+                }
+            } else
             {
-                File *createdFile = new File(words[1]);
-                selectedFilePlan.addFile(selectedFolder->getName(), selectedFolder->getId(), *createdFile);
-                getline(std::cin, text);
-                fileOutput << text << std::endl;
-                std::cout << "Text saved\n";
-                delete createdFile;
+                std::cout << "Amount of arguments inadequate\n";
             }
+            
         }
         if (words[0] == "ssh")
         {
-            if (!words[1].empty())
+            if (words.size() == 2 && !words[1].empty())
             {
                 if (words[1] == remoteSystem.getName())
                 {
                     selectedFilePlan = remoteSystem;
                     selectedFolder = findFolder(selectedFilePlan.getSystemFile(), remoteUser.getName(), remoteUser.getId());
                 }
+            } else
+            {
+                std::cout << "Amount of arguments inadequate\n";
             }
         }
         if (words[0] == "exit")
