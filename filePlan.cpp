@@ -11,6 +11,15 @@ std::vector<Folder *> FilePlan::getSystemFile()
     return this->systemFile;
 }
 
+std::string FilePlan::getName()
+{
+    return this->name;
+}
+void FilePlan::setName(std::string name)
+{
+    this->name = name;
+}
+
 void FilePlan::addFolderToPlan(std::string parentName, int parentId, std::vector<Folder *> newChildrenFolders)
 {
     for(Folder *child : newChildrenFolders)
@@ -198,6 +207,7 @@ Folder* FilePlan::targetDir(Folder *currentFolder, std::string destinationName)
         if (found->getName() == NOT_FOUND)
         {
             std::cout << arg + " not found in " + currentFolder->getName() << std::endl;
+            delete found;
             break;
         }
         currentFolder = found;

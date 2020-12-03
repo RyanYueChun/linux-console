@@ -6,10 +6,13 @@
 class FilePlan
 {
 private:
+    std::string name;
     std::vector<Folder *> systemFile;
     static int latestId;
 public:
     FilePlan(Folder *);
+    std::string getName();
+    void setName(std::string name);
     std::vector<Folder *> getSystemFile();
     void addFolderToPlan(const std::string parentName, const int parentId, std::vector<Folder *> newChildrenFolders);
     void addFolderToPlan(const std::string parentName, const int parentId, Folder * newChildFolder);
