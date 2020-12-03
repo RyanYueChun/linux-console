@@ -25,6 +25,7 @@ int main()
     Folder videos("videos");
 
     FilePlan filePlan(&root);
+    filePlan.setName("Local");
 
     filePlan.addFolderToPlan(root.getName(), root.getId(), &home);
     filePlan.addFolderToPlan(home.getName(), home.getId(), &user1);
@@ -41,10 +42,50 @@ int main()
 
     filePlan.addFolderToPlan(user1.getName(), user1.getId(), user1Children);
 
+    // -------------
+    // Remote systyme file accessible using ssh
+    Folder rRoot("/");
+    rRoot.setId(0);
+    rRoot.setPath(rRoot.getName());
+    Folder rHome("home");
+    Folder remoteUser("remoteUser");
+
+    Folder rDesktop("desktop");
+    Folder rDocuments("documents");
+    Folder rDownloads("downloads");
+    Folder rMusic("music");
+    Folder rPictures("pictures");
+    Folder rVideos("videos");
+
+    FilePlan remoteSystem(&rRoot);
+    remoteSystem.setName("Remote");
+
+    remoteSystem.addFolderToPlan(rRoot.getName(), rRoot.getId(), &rHome);
+    remoteSystem.addFolderToPlan(rHome.getName(), rHome.getId(), &remoteUser);
+
+    std::vector<Folder *> remoteUserChildren;
+    remoteUserChildren = {
+        &rDesktop,
+        &rDocuments,
+        &rDownloads,
+        &rMusic,
+        &rPictures,
+        &rVideos
+    };
+
+    remoteSystem.addFolderToPlan(remoteUser.getName(), remoteUser.getId(), remoteUserChildren);
+    // -------------
+
     // Folder where console is by default
-    Folder *selectedFolder = findFolder(filePlan.getSystemFile(), music.getName(), music.getId());
+    Folder *selectedFolder = findFolder(filePlan.getSystemFile(), user1.getName(), user1.getId());
     std::cout << selectedFolder->getPath() << std::endl;
 
+    // Current File system that the console is using
+    FilePlan selectedFilePlan(&root);
+    selectedFilePlan = filePlan;
+
+    // -----------------
+    // Program begin
     // Read user's input
     std::string line;
     std::vector<Folder *> createdFolders;
@@ -60,7 +101,7 @@ int main()
         if (words[0] == "cd" && words.size() > 1)
         {
             // cd has only 1 argument
-            selectedFolder = filePlan.targetDir(selectedFolder, words[1]);
+            selectedFolder = selectedFilePlan.targetDir(selectedFolder, words[1]);
         }
         if (words[0] == "ls")
         {
@@ -71,7 +112,7 @@ int main()
             for (int i = 1; i < words.size(); i++)
             {
                 Folder *createdFolder = new Folder(words[i]);
-                filePlan.addFolderToPlan(selectedFolder->getName(), selectedFolder->getId(), createdFolder);
+                selectedFilePlan.addFolderToPlan(selectedFolder->getName(), selectedFolder->getId(), createdFolder);
                 createdFolders.push_back(createdFolder);
             }
         }
@@ -90,16 +131,34 @@ int main()
             if (fileOutput.is_open())
             {
                 File *createdFile = new File(words[1]);
-                filePlan.addFile(selectedFolder->getName(), selectedFolder->getId(), *createdFile);
+                selectedFilePlan.addFile(selectedFolder->getName(), selectedFolder->getId(), *createdFile);
                 getline(std::cin, text);
                 fileOutput << text << std::endl;
                 std::cout << "Text saved\n";
                 delete createdFile;
             }
         }
+        if (words[0] == "ssh")
+        {
+            if (!words[1].empty())
+            {
+                if (words[1] == remoteSystem.getName())
+                {
+                    selectedFilePlan = remoteSystem;
+                    selectedFolder = findFolder(selectedFilePlan.getSystemFile(), remoteUser.getName(), remoteUser.getId());
+                }
+            }
+        }
+        if (words[0] == "exit")
+        {
+            selectedFilePlan = filePlan;
+            selectedFolder = findFolder(filePlan.getSystemFile(), user1.getName(), user1.getId());
+        }
         std::cout << selectedFolder->getPath() + " $ ";
     }
     std::cout << std::endl;
+    // Program end
+    // -----------------
 
     for (std::vector<Folder *>::iterator i = createdFolders.begin(); i != createdFolders.end(); ++i)
     {
