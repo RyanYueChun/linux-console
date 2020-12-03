@@ -60,11 +60,11 @@ int main()
         if (words[0] == "cd" && words.size() > 1)
         {
             // cd has only 1 argument
-            selectedFolder = filePlan.targetDir(filePlan, selectedFolder, words[1]);
+            selectedFolder = filePlan.targetDir(selectedFolder, words[1]);
         }
         if (words[0] == "ls")
         {
-            std::cout << selectedFolder->listOfChildren() << std::endl;
+            std::cout << selectedFolder->listOfChildren() + "\t\t" + selectedFolder->listOfFiles() << std::endl;
         }
         if (words[0] == "mkdir")
         {
@@ -89,9 +89,12 @@ int main()
             }
             if (fileOutput.is_open())
             {
+                File *createdFile = new File(words[1]);
+                filePlan.addFile(selectedFolder->getName(), selectedFolder->getId(), *createdFile);
                 getline(std::cin, text);
                 fileOutput << text << std::endl;
                 std::cout << "Text saved\n";
+                delete createdFile;
             }
         }
         std::cout << selectedFolder->getPath() + " $ ";
