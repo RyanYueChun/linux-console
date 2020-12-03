@@ -74,17 +74,28 @@ std::string Folder::listOfChildren()
     return strList;
 }
 
-std::vector<File> Folder::getContents()
+std::vector<File> Folder::getFiles()
 {
-    return this->contents;
+    return this->files;
 }
-void Folder::addContent(File content)
+std::string Folder::fetchFile(std::string fileName)
 {
-    this->contents.push_back(content);
+    for (File file : this->getFiles())
+    {
+        if (file.getName() == fileName)
+        {
+            return file.getName();
+        }
+    }
+    return NOT_FOUND;
 }
-std::string Folder::listOfContents()
+void Folder::addFile(File content)
 {
-    std::vector<File> vector = this->getContents();
+    this->files.push_back(content);
+}
+std::string Folder::listOfFiles()
+{
+    std::vector<File> vector = this->getFiles();
     std::string strList;
     for(File f : vector)
     {

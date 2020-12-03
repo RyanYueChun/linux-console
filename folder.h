@@ -12,7 +12,7 @@ private:
     std::string name;
     std::string path;
     std::vector<Folder *> children;
-    std::vector<File> contents;
+    std::vector<File> files;
 public:
     Folder();
     Folder(const std::string name);
@@ -34,12 +34,15 @@ public:
     void addChildren(std::vector<Folder *>);
     std::string listOfChildren();
     
-    std::vector<File> getContents();
-    void addContent(File content);
-    std::string listOfContents();
+    std::vector<File> getFiles();
+    std::string fetchFile(std::string fileName);
+    void addFile(File file);
+    std::string listOfFiles();
 };
 
 template <typename T>
 std::string printVector(std::vector<T> vector);
+
+const std::string NOT_FOUND = "Not Found";
 
 #endif
