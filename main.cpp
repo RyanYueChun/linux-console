@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <cstdio>
 
 #include "folder.h"
 #include "file.h"
@@ -89,6 +90,7 @@ int main()
     // Read user's input
     std::string line;
     std::vector<Folder *> createdFolders;
+    std::vector<std::string> createdFiles;
     std::string storageFolder = "contents/";
     while(line != "quit")
     {
@@ -131,20 +133,22 @@ int main()
                 std::ifstream fileInput(storageFolder + words[1], std::ios::in);
                 std::ofstream fileOutput(storageFolder + words[1], std::ios_base::app);
                 std::string text;
-                if (fileInput.is_open())
-                {
-                    while (getline(fileInput, text))
-                    {
-                        std::cout << text << std::endl;
-                    }
-                }
                 if (fileOutput.is_open())
                 {
                     File *createdFile = new File(words[1]);
                     selectedFilePlan.addFile(selectedFolder->getName(), selectedFolder->getId(), *createdFile);
+                    if (fileInput.is_open())
+                    {
+                        while (getline(fileInput, text))
+                        {
+                            std::cout << text << std::endl;
+                        }
+                    }
                     getline(std::cin, text);
                     fileOutput << text << std::endl;
                     std::cout << "Text saved\n";
+                    createdFiles.push_back(words[1]);
+
                     delete createdFile;
                 }
             } else
@@ -186,5 +190,15 @@ int main()
     if (selectedFolder->getName() == NOT_FOUND)
     {
         delete selectedFolder;
+    }
+    for (std::string file : createdFiles)
+    {
+        std::string fName = storageFolder + file;
+        std::ifstream fileInput(fName, std::ios::in);
+        if (fileInput.is_open())
+        {
+            // delete created files
+            const int result = remove(fName.c_str());
+        }
     }
 }
