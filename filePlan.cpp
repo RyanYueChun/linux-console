@@ -62,6 +62,31 @@ void FilePlan::addAsChild(Folder *currentFolder, std::vector<Folder *> newChildr
     }
 }
 
+void FilePlan::addFile(const std::string parentName, const int parentId, File file)
+{
+    std::vector<Folder *> folders = this->systemFile;
+
+    Folder *parent = findFolder(folders, parentName, parentId);
+    if(parent->getName() != NOT_FOUND)
+    {
+        // file already exist?
+        std::string found = parent->fetchFile(file.getName());
+        if(found != NOT_FOUND)
+        {
+            std::cout << "File \'" + file.getName() + "\' already exists inside " << parent->getName() + ". Entering edit mode" << std::endl;
+        } else
+        {
+            parent->addFile(file);
+            std::cout << "File \'" + file.getName() + "\' created inside " << parent->getName() << std::endl;
+        }
+    } else
+    {
+        std::cout << "The parent folder doesn't exist\n";
+        // Object created in the "heap" with "new" operator must be deleted manually
+        delete parent;
+    }
+}
+
 int FilePlan::getNewId()
 {
     return ++FilePlan::latestId;
@@ -145,7 +170,7 @@ void strToVector(std::string line, std::vector<std::string> *words, std::string 
     }
 }
 
-Folder* FilePlan::targetDir(FilePlan filePlan, Folder *currentFolder, std::string destinationName)
+Folder* FilePlan::targetDir(Folder *currentFolder, std::string destinationName)
 {
     std::vector<std::string> args;
     strToVector(destinationName, &args, "/");
