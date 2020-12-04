@@ -5,6 +5,11 @@ File::File(std::string name)
     this->name = name;
 }
 
+void File::setName(std::string name)
+{
+    this->name = name;
+}
+
 std::string File::getName()
 {
     return this->name;
