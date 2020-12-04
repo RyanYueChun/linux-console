@@ -10,6 +10,23 @@
 
 int FilePlan::latestId = 0;
 
+FilePlan* fetchFilePlan(std::vector<FilePlan *> listFilePlans, std::string fpName)
+{
+    for (FilePlan *fp : listFilePlans)
+    {
+        if (fpName == fp->getName())
+        {
+            return fp;
+        }
+    }
+    return new FilePlan(NOT_FOUND);
+}
+
+void secureCopy(File fileToSend, Folder *destFolder)
+{
+    destFolder->addFile(fileToSend);
+}
+
 int main()
 {
     Folder root("/");
@@ -82,8 +99,11 @@ int main()
     std::cout << selectedFolder->getPath() << std::endl;
 
     // Current File system that the console is using
-    FilePlan selectedFilePlan(&root);
-    selectedFilePlan = filePlan;
+    // FilePlan selectedFilePlan("temp");
+    // selectedFilePlan = filePlan;
+    FilePlan *pSelectedFP = &filePlan;
+
+    std::vector<FilePlan *> listFilePlans = {&filePlan, &remoteSystem};
 
     // -----------------
     // Program begin
@@ -103,15 +123,16 @@ int main()
         if (words[0] == "cd" && words.size() == 2)
         {
             // cd has only 1 argument
-            selectedFolder = selectedFilePlan.targetDir(selectedFolder, words[1]);
+            selectedFolder = pSelectedFP->targetDir(selectedFolder, words[1]);
         }
         if (words[0] == "ls")
         {
             Folder *temp;
             if (words.size() == 2)
             {
-                temp = selectedFilePlan.targetDir(selectedFolder, words[1]);
+                temp = pSelectedFP->targetDir(selectedFolder, words[1]);
                 std::cout << temp->listOfChildren() + "\t\t" + temp->listOfFiles() << std::endl;
+                std::cout << selectedFolder->getName() + "\n";
             } else
             {
                 std::cout << selectedFolder->listOfChildren() + "\t\t" + selectedFolder->listOfFiles() << std::endl;
@@ -122,7 +143,7 @@ int main()
             for (int i = 1; i < words.size(); i++)
             {
                 Folder *createdFolder = new Folder(words[i]);
-                selectedFilePlan.addFolderToPlan(selectedFolder->getName(), selectedFolder->getId(), createdFolder);
+                pSelectedFP->addFolderToPlan(selectedFolder->getName(), selectedFolder->getId(), createdFolder);
                 createdFolders.push_back(createdFolder);
             }
         }
@@ -135,8 +156,8 @@ int main()
                 std::string text;
                 if (fileOutput.is_open())
                 {
-                    File *createdFile = new File(words[1]);
-                    selectedFilePlan.addFile(selectedFolder->getName(), selectedFolder->getId(), *createdFile);
+                    File createdFile(words[1]);
+                    pSelectedFP->addFile(selectedFolder->getName(), selectedFolder->getId(), createdFile);
                     if (fileInput.is_open())
                     {
                         while (getline(fileInput, text))
@@ -148,8 +169,6 @@ int main()
                     fileOutput << text << std::endl;
                     std::cout << "Text saved\n";
                     createdFiles.push_back(words[1]);
-
-                    delete createdFile;
                 }
             } else
             {
@@ -161,11 +180,8 @@ int main()
         {
             if (words.size() == 2 && !words[1].empty())
             {
-                if (words[1] == remoteSystem.getName())
-                {
-                    selectedFilePlan = remoteSystem;
-                    selectedFolder = findFolder(selectedFilePlan.getSystemFile(), remoteUser.getName(), remoteUser.getId());
-                }
+                pSelectedFP = fetchFilePlan(listFilePlans, words[1]);
+                selectedFolder = findFolder(pSelectedFP->getSystemFile(), pSelectedFP->getSystemFile()[2]->getName(), pSelectedFP->getSystemFile()[2]->getId());
             } else
             {
                 std::cout << "Amount of arguments inadequate\n";
@@ -173,8 +189,50 @@ int main()
         }
         if (words[0] == "exit")
         {
-            selectedFilePlan = filePlan;
-            selectedFolder = findFolder(filePlan.getSystemFile(), user1.getName(), user1.getId());
+            if (pSelectedFP != &filePlan)
+            {
+                pSelectedFP = &filePlan;
+                selectedFolder = findFolder(filePlan.getSystemFile(), user1.getName(), user1.getId());
+            }
+        }
+        if (words[0] == "scp" && words.size() == 3)
+        {
+            std::vector<std::string> sepColumn;
+            std::vector<std::string> sepSlash;
+            strToVector(words[2], &sepColumn, ":");
+
+            File fileToSend = selectedFolder->fetchFile(words[1]);
+            Folder destFolder("/");
+            Folder *pDestFolder = &destFolder;
+            FilePlan *destFilePlan = fetchFilePlan(listFilePlans, sepColumn[0]);
+
+            if (sepColumn.size() > 1)
+            {
+                strToVector(sepColumn[1], &sepSlash, "/");
+
+                std::cout << "rrrrrrrrrrrrrr\n";
+
+                fileToSend.setName(sepSlash.back());
+                sepSlash.pop_back();
+
+                std::cout << "rrrrrrrrrrrrrr\n";
+
+                if (sepSlash.size() > 0)
+                {
+                    pDestFolder = destFilePlan->targetDir(pDestFolder, sepSlash);
+                } else
+                {
+                    pDestFolder = destFilePlan->getSystemFile()[2];
+                }
+            } else
+            {
+                pDestFolder = destFilePlan->getSystemFile()[2];
+            }
+            
+            secureCopy(fileToSend, pDestFolder);
+        } else if (words[0] == "scp" && words.size() != 3)
+        {
+            std::cout << "Amount of arguments inadequate\n";
         }
         std::cout << selectedFolder->getPath() + " $ ";
     }
