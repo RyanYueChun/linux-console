@@ -1,6 +1,11 @@
 #include <iostream>
 #include "filePlan.h"
 
+FilePlan::FilePlan(std::string name)
+{
+    this->name = name;
+}
+
 FilePlan::FilePlan(Folder *root)
 {
     this->systemFile.push_back(root);
@@ -179,17 +184,21 @@ void strToVector(std::string line, std::vector<std::string> *words, std::string 
     }
 }
 
-Folder* FilePlan::targetDir(Folder *currentFolder, std::string destinationName)
+Folder* FilePlan::targetDir(Folder *currentFolder, std::string fullDestinationName)
 {
     std::vector<std::string> args;
-    strToVector(destinationName, &args, "/");
+    strToVector(fullDestinationName, &args, "/");
 
-    if (destinationName[0] == '/')
+    if (fullDestinationName[0] == '/')
     {
         currentFolder = findFolder(this->getSystemFile(), "/", 0);
     }
+    return targetDir(currentFolder, args);
+}
 
-    for (std::string arg : args)
+Folder* FilePlan::targetDir(Folder *currentFolder, std::vector<std::string> noSlashDestVect)
+{
+    for (std::string arg : noSlashDestVect)
     {
         if (arg == ".")
         {

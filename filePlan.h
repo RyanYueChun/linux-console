@@ -10,6 +10,7 @@ private:
     std::vector<Folder *> systemFile;
     static int latestId;
 public:
+    FilePlan(std::string name);
     FilePlan(Folder *);
     std::string getName();
     void setName(std::string name);
@@ -20,7 +21,8 @@ public:
     void addAsChild(Folder *, std::vector<Folder *>);
     void addFile(const std::string parentName, const int parentId, File file);
     static int getNewId();
-    Folder* targetDir(Folder *currentFolder, std::string destinationName);
+    Folder* targetDir(Folder *currentFolder, std::string fullDestinationName);
+    Folder* targetDir(Folder *currentFolder, std::vector<std::string> noSlashDestVect);
 };
 
 Folder* findFolder(std::vector<Folder *>, const std::string, const int id);
